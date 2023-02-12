@@ -46,6 +46,7 @@
             type="email"
             clearable/>
         <InputText
+            style="display: none"
             :name="'role'"
             label="Role"
             type="number"
