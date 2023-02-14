@@ -10,7 +10,7 @@
           <span class="text-h5 text-white font-weight-bold text-uppercase">user information</span>
         </v-card-item>
         <v-container class="text-uppercase">
-          <v-form @submit.prevent="submitData" ref="form">
+          <v-form @submit.prevent="submitData" >
             <v-row justify="center">
               <v-col cols="8">
                 <input-text
@@ -93,7 +93,7 @@ let props = defineProps({
 
 const emit = defineEmits(["updateData", "closeDialog", "closeEdit",])
 
-const {handleSubmit, values, setValues, resetForm, handleReset} = useForm({
+const {handleSubmit, values, setValues, resetForm} = useForm({
   validationSchema: yup.object().shape({
     fullName: yup.string(),
     email: yup.string(),
@@ -132,7 +132,8 @@ const submitData = handleSubmit(((values) => {
 }));
 
 const closeDialog = () => {
-  emit("closeDialog");
+  emit("closeDialog" , props.edit = {});
+  console.log(props.edit)
 
 };
 //

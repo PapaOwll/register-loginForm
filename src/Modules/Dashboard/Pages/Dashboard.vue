@@ -142,11 +142,10 @@ const data = (fullName?: any) => {
   if (fullName) {
     params = fullName;
   }
-  console.log(params)
   axios.get('http://192.168.1.151:2000/api/v1/user', {
         responseType: "json",
         headers: {Authorization: 'Bearer ' + token},
-        params: {fullName: fullName}
+        params: {fullName: params}
       },
   ).then((res) => {
     dataTable.value = res.data
@@ -154,7 +153,6 @@ const data = (fullName?: any) => {
 }
 
 const userAdd = () => {
-  formValues.value = {};
   addDialog.value = true;
 }
 
