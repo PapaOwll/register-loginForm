@@ -50,7 +50,12 @@
 
         <v-toolbar class="pa-5" title="Users">
           <v-col class="h-100 align-self-end" :md="1">
-            <v-btn class="h-100" color="success" variant="elevated" @click="">Add User</v-btn>
+            <v-btn
+                class="h-100"
+                color="success"
+                variant="elevated"
+                @click="userAdd">Add User
+            </v-btn>
           </v-col>
           <v-col class="h-100 align-self-end" :md="1">
 
@@ -58,7 +63,7 @@
           <v-col class="h-100 align-self-center" :md="2">
             <v-text-field
                 v-model="filterName">
-              <v-btn class="position-absolute" color="success" variant="flat" @click="data(filterName)">
+              <v-btn color="success" variant="flat" @click="data(filterName)">
                 <v-icon>mdi-search-web</v-icon>
               </v-btn>
             </v-text-field>
@@ -82,45 +87,56 @@
           </tr>
           </thead>
           <tbody>
-          <tr v-for="item in dataTable" :key="item.id">
+          <tr v-for="(item, index) in dataTable" :key="item.id">
             <td class="text-left">{{ item.fullName }}</td>
             <td>{{ item.email }}</td>
             <td>{{ item.nationalCode }}</td>
-            <td >
+            <td>
               <v-btn
                   class="h-100"
                   color="primary"
                   variant="elevated"
-                  @click="editUser">Edit</v-btn>
+                  @click="userEdit(dataTable[index])"
+              >
+                edit
+              </v-btn>
             </td>
+
           </tr>
           </tbody>
         </v-table>
       </v-main>
     </v-layout>
   </v-card>
-<dialog-box
-    :show="dialogVisible"
-    :edit = 'formValues'
-    @closeDialog="dialogVisible=false"
-    @closeModal="dialogVisible=false"
-    @updateData="updateUser"
-/>
+
+  <add-user
+      :show="addDialog"
+      :edit="formValues"
+      @closeDialog="addDialog = false"
+      @closeModal="addDialog = false"
+      @closeEdit="updateTable"
+  />
 </template>
 
 <script setup lang="ts">
 import {onMounted, ref} from 'vue'
 import axios from "axios";
-import {useForm} from "vee-validate";
-import * as yup from 'yup'
-import DialogBox from "../../Home/Component/DialogBox.vue";
+import AddUser from '../../Home/Component/AddEditDialogBox.vue'
+
 const rail = ref(true)
 const drawer = ref(true)
 const token = localStorage.getItem('token')
 const dataTable = ref(null)
 const filterName = ref(null)
-const dialogVisible = ref(false)
-let formValues: any = ref(null);
+const addDialog = ref(false)
+
+const formValues: any = ref(null);
+
+const updateTable = () => {
+  addDialog.value = false;
+  data()
+}
+
 const data = (fullName?: any) => {
   let params = '';
   if (fullName) {
@@ -133,22 +149,21 @@ const data = (fullName?: any) => {
         params: {fullName: fullName}
       },
   ).then((res) => {
-    console.log(res)
     dataTable.value = res.data
   })
 }
-const {handleSubmit , values} = useForm({
-  validationSchema : yup.object().shape({
-    nationalCode : yup.number().required(),
-    fullName : yup.string().required(),
-    email: yup.string().required(),
-  })
-})
-const editUser = (user : any) => {
-  dialogVisible.value=true;
-  formValues.value= user ;
+
+const userAdd = () => {
+  formValues.value = {};
+  addDialog.value = true;
+}
+
+const userEdit = (row: any) => {
+  addDialog.value = true;
+  formValues.value = row;
   console.log(formValues.value)
 }
+
 onMounted(data)
 </script>
 
