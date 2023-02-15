@@ -93,7 +93,7 @@ let props = defineProps({
 
 const emit = defineEmits(["updateData", "closeDialog", "closeEdit",])
 
-const {handleSubmit, values, setValues, resetForm} = useForm({
+const {handleSubmit, values, setFieldValue} = useForm({
   validationSchema: yup.object().shape({
     fullName: yup.string(),
     email: yup.string(),
@@ -104,9 +104,9 @@ const {handleSubmit, values, setValues, resetForm} = useForm({
   }),
 });
 
-const submitData = handleSubmit(((values) => {
-  console.log(values)
-  if (props.edit.id) {
+const submitData = () => {
+  console.log('in submit', values)
+  if (props.edit && props.edit.id) {
     axios
         .put(`http://192.168.1.151:2000/api/v1/user/${props.edit.id}`, values, {
           headers: {
@@ -126,22 +126,27 @@ const submitData = handleSubmit(((values) => {
           headers: {Authorization: 'Bearer ' + token},
         }
     ).then(() => {
-      emit("closeEdit", true)
+      emit("closeEdit", true);
     })
   }
-}));
+}
 
 const closeDialog = () => {
-  emit("closeDialog" , props.edit = {});
-  console.log(props.edit)
-
+  emit("closeEdit", true);
 };
-//
-watchEffect(() => {
-  if (props.edit && props.edit.id) {
-    setValues(props.edit);
+
+
+watch(props, (value) => {
+  if (value.edit && value.edit.id) {
+    setTimeout(() => {
+      setFieldValue('phone', props.edit.phone);
+      setFieldValue('email', props.edit.email);
+      setFieldValue('fullName', props.edit.fullName);
+      setFieldValue('password', props.edit.password);
+      setFieldValue('nationalCode', props.edit.nationalCode);
+    }, 300);
   }
-})
+});
 
 
 </script>

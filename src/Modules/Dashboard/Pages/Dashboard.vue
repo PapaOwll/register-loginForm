@@ -41,32 +41,28 @@
         <div class="pa-5 d-flex">
           <v-row>
             <v-col>
-              <h1 class="pa-5">dashboard</h1>
+              <h1 class="pa-10 text-uppercase">dashboard</h1>
             </v-col>
-            <v-col>
-            </v-col>
+              <v-col class="h-100 my-auto" :md="4">
+                <v-text-field
+                    single-line
+                    v-model="filterName">
+                  <v-btn class="mr-3 m" color="success" variant="flat" @click="data(filterName)">
+                    <v-icon>mdi-search-web</v-icon>
+                  </v-btn>
+                </v-text-field>
+              </v-col>
           </v-row>
         </div>
 
         <v-toolbar class="pa-5" title="Users">
-          <v-col class="h-100 align-self-end" :md="1">
+          <v-col class="h-100 align-self-end" :md="2">
             <v-btn
-                class="h-100"
                 color="success"
                 variant="elevated"
-                @click="userAdd">Add User
+                @click="userAdd">
+              <span>Add User</span>
             </v-btn>
-          </v-col>
-          <v-col class="h-100 align-self-end" :md="1">
-
-          </v-col>
-          <v-col class="h-100 align-self-center" :md="2">
-            <v-text-field
-                v-model="filterName">
-              <v-btn color="success" variant="flat" @click="data(filterName)">
-                <v-icon>mdi-search-web</v-icon>
-              </v-btn>
-            </v-text-field>
           </v-col>
         </v-toolbar>
         <v-table fixed-header class="pa-5  h-100 text-center">
@@ -93,12 +89,20 @@
             <td>{{ item.nationalCode }}</td>
             <td>
               <v-btn
-                  class="h-100"
+                  class="h-100 mr-3"
                   color="primary"
                   variant="elevated"
                   @click="userEdit(dataTable[index])"
               >
                 edit
+              </v-btn>
+              <v-btn
+                  class="h-100"
+                  color="error"
+                  variant="elevated"
+                  @click="deleteUser(dataTable[index])"
+              >
+                Delete
               </v-btn>
             </td>
 
@@ -107,19 +111,49 @@
         </v-table>
       </v-main>
     </v-layout>
+    <v-layout class="overflow-visible" style="height: 56px;">
+      <v-bottom-navigation
+          v-model="colorValue"
+          :bg-color="colorChange"
+          mode="shift"
+      >
+        <v-btn>
+          <v-icon>mdi-television-play</v-icon>
+
+          <span>Video</span>
+        </v-btn>
+
+        <v-btn>
+          <v-icon>mdi-music-note</v-icon>
+
+          <span>Music</span>
+        </v-btn>
+
+        <v-btn>
+          <v-icon>mdi-book</v-icon>
+
+          <span>Book</span>
+        </v-btn>
+
+        <v-btn>
+          <v-icon>mdi-image</v-icon>
+
+          <span>Image</span>
+        </v-btn>
+      </v-bottom-navigation>
+    </v-layout>
   </v-card>
+
 
   <add-user
       :show="addDialog"
       :edit="formValues"
-      @closeDialog="addDialog = false"
-      @closeModal="addDialog = false"
       @closeEdit="updateTable"
   />
 </template>
 
 <script setup lang="ts">
-import {onMounted, ref} from 'vue'
+import {computed, onMounted, ref} from 'vue'
 import axios from "axios";
 import AddUser from '../../Home/Component/AddEditDialogBox.vue'
 
@@ -129,11 +163,13 @@ const token = localStorage.getItem('token')
 const dataTable = ref(null)
 const filterName = ref(null)
 const addDialog = ref(false)
-
+const colorValue: any = ref(null)
 const formValues: any = ref(null);
+
 
 const updateTable = () => {
   addDialog.value = false;
+  formValues.value = null;
   data()
 }
 
@@ -153,15 +189,41 @@ const data = (fullName?: any) => {
 }
 
 const userAdd = () => {
+  formValues.value = null;
   addDialog.value = true;
 }
 
 const userEdit = (row: any) => {
   addDialog.value = true;
   formValues.value = row;
-  console.log(formValues.value)
 }
 
+const deleteUser = (row: any) => {
+  axios.delete(`http://192.168.1.151:2000/api/v1/user/${row.id}`, {
+    responseType: "json",
+    headers: {Authorization: 'Bearer ' + token},
+  })
+      .then((res) => {
+        console.log(res)
+      })
+      .then(() => {
+        updateTable()
+      })
+}
+const colorChange = computed(() => {
+  switch (colorValue.value) {
+    case 0 :
+      return 'red'
+    case 1 :
+      return 'teal'
+    case 2 :
+      return 'indigo'
+    case 3 :
+      return 'orange'
+    default :
+      return 'blue-grey'
+  }
+})
 onMounted(data)
 </script>
 
