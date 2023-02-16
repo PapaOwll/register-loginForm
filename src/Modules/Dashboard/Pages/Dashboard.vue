@@ -31,6 +31,9 @@
         </v-btn>
       </v-bottom-navigation>
     </v-layout>
+
+
+
     <v-layout>
 
       <v-navigation-drawer
@@ -69,11 +72,14 @@
         </v-list>
       </v-navigation-drawer>
       <v-main style="height: auto">
-        <div class="pa-5 d-flex">
-          <v-row>
-            <v-col>
-              <h1 class="pa-10 text-uppercase">dashboard</h1>
-            </v-col>
+        <v-parallax
+            height="300"
+            src="https://cdn.vuetifyjs.com/images/backgrounds/vbanner.jpg">
+
+          <div class="d-flex">
+            <v-row class="pa-15">
+              <v-col class="d-flex">
+                <img src="https://sguru.org/wp-content/uploads/2018/02/facebook-text-transparent-logo-23.png" width="300" height="150" alt="logo"></v-col>
               <v-col class="h-100 my-auto" :md="4">
                 <v-text-field
                     single-line
@@ -83,8 +89,10 @@
                   </v-btn>
                 </v-text-field>
               </v-col>
-          </v-row>
-        </div>
+            </v-row>
+          </div>
+        </v-parallax>
+
 
         <v-toolbar class="pa-5" title="Users">
           <v-col class="h-100 align-self-end" :md="2">
@@ -142,6 +150,8 @@
         </v-table>
       </v-main>
     </v-layout>
+
+
   </v-card>
 
   <add-user
